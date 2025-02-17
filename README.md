@@ -65,56 +65,7 @@ Airgap (mm): Distance between the resonator and the backing surface.
 Correction Factor (k): Empirical correction factor for the formula.
 Formula
 The resonance frequency 
-𝑓
-f is calculated using the following formula:
 
-𝑓
-=
-𝑘
-×
-𝑐
-2
-𝜋
-×
-𝐴
-𝑉
-×
-𝐿
-eff
-f=k× 
-2π
-c
-​
- × 
-V×L 
-eff
-​
- 
-A
-​
- 
-​
- 
-
-Where:
-
-𝑐
-c: Speed of sound (331 + 0.6 × T m/s, where 
-𝑇
-T is the temperature in °C).
-𝐴
-A: Total area of the holes.
-𝑉
-V: Volume of the cavity.
-𝐿
-eff
-L 
-eff
-​
- : Effective length of the neck (including end corrections).
-𝑘
-k: Correction factor.
-This formula is derived from the resonance relation for a Helmholtz resonator, where the resonance frequency depends on the speed of sound, the area of the neck, the volume of the cavity, and the effective length of the neck.
 
 Deployment
 This app is deployed using Streamlit Community Cloud. Any changes pushed to the main branch of the GitHub repository will automatically update the deployed app.
