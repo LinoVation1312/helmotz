@@ -182,7 +182,7 @@ if st.sidebar.button("Calculate"):
             - Holes: {int(df['N'].iloc[-1])}"""
             
             ax.annotate(text, 
-                        xy=(0.98, 0.65), 
+                        xy=(0.78, 0.65), 
                         xycoords='axes fraction',
                         ha='left', 
                         va='top',
@@ -192,9 +192,7 @@ if st.sidebar.button("Calculate"):
                                 facecolor='white', 
                                 alpha=0.8,
                                 edgecolor='lightgray'))
-            # Ajout d'une légende standard
-            ax.legend(loc='upper left', framealpha=0.8)
-            
+
             st.pyplot(fig)       
             # Export data
             csv = df.to_csv(index=False).encode()
