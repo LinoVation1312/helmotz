@@ -12,7 +12,7 @@ st.set_page_config(page_title="Helmholtz Resonance Frequency Calculator", layout
 def calculate_frequency(temperature, thickness_mm, hole_diameter_mm, number_of_holes, material_diameter_mm, airgap_mm, k):
     try:
         # Unit conversion
-        c = 331 + 0.6 * temperature  # Speed of sound (m/s)
+        c =  20*np.sqrt(273,15 * temperature)  # Speed of sound (m/s)
         thickness = thickness_mm / 1000  # Thickness (m)
         hole_diameter = hole_diameter_mm / 1000  # Hole diameter (m)
         material_diameter = material_diameter_mm / 1000  # Material diameter (m)
