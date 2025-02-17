@@ -192,7 +192,6 @@ if st.sidebar.button("Calculate"):
                                 facecolor='white', 
                                 alpha=0.8,
                                 edgecolor='lightgray'))
-            
             # Ajout d'une légende standard
             ax.legend(loc='upper left', framealpha=0.8)
             
@@ -221,8 +220,15 @@ with st.expander("Theory"):
 
 with st.expander("Calculation Notes"):
     st.markdown("""
+    **Typical Correction Factors (k):**
+    - 0.65 - Thin materials (t < 1mm) with sharp edges
+    - 0.75 - Standard perforated plates
+    - 0.85 - Thick materials with chamfered holes
+    - 1.00 - Theoretical value (ideal case)
+    - 1.15 - Flanged openings or rounded edges
+
     **Key relationships:**
     - Open Area % = (Total Hole Area / Material Area) × 100
     - Hole Density = Number of Holes / (Material Area in cm²)
     - Hole Spacing = √(Material Area / Number of Holes)
-    """)
+    """, unsafe_allow_html=True)
