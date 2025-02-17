@@ -193,9 +193,9 @@ with st.expander("Theory and Correction Coefficients"):
     
 The resonance frequency is given by the formula:
 
-$$
-f = k \cdot \frac{c}{2 \pi} \cdot \sqrt{\frac{A}{V \cdot L_{eff}}}
-$$
+
+$f$ = k \cdot \frac{c}{2 \pi} \cdot \sqrt{\frac{A}{V \cdot L_{eff}}}
+
 
 where:
 - $c$ = speed of sound ($20.05 \cdot \sqrt{T}$ in Kelvin
