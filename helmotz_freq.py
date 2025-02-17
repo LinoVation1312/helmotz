@@ -191,20 +191,19 @@ with st.expander("Theory and Correction Coefficients"):
     st.markdown("""
     **Formula used:**
     
-    The resonance frequency is given by the formula:
+The resonance frequency is given by the formula:
 
-    
-   $$f = k \cdot \frac{c}{2 \pi} \cdot \sqrt{\frac{A}{V \cdot L_{eff}}}$$
+$$
+f = k \cdot \frac{c}{2 \pi} \cdot \sqrt{\frac{A}{V \cdot L_{eff}}}
+$$
 
-
-    where:
-    - $c$ = speed of sound ($20.05 \cdot \sqrt{T (Kelvin})
-    - $A$ = total hole area
-    - $V$ = cavity volume
-    - $L_{eff}$ = thickness + end correction ($0.85 \cdot \text{hole diameter}$)
-    - $k$ = correction coefficient
-    """)
-
+where:
+- $c$ = speed of sound ($331 + 0.6 \cdot T^\circ$C)
+- $A$ = total hole area
+- $V$ = cavity volume
+- $L_{eff}$ = thickness + end correction ($0.85 \cdot \text{hole diameter}$)
+- $k$ = correction coefficient
+""")
 
     st.markdown("""
     **Correction Coefficients:**
