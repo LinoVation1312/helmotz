@@ -169,10 +169,10 @@ if st.sidebar.button("Calculate"):
             
             # Configuration du graphique
             title = f"Helmholtz Resonance Frequency vs. {vary_param}"
-            ax.set_title(title, fontsize=14, pad=20)
+            ax.set_title(title, fontsize=15, pad=20)
             ax.set_xlabel(vary_param, fontsize=12)
             ax.set_ylabel("Frequency (Hz)", fontsize=12)
-            ax.grid(True, alpha=0.3)
+            ax.grid(True, alpha=0.4)
             
             # Légende améliorée
             text = f"""Final Parameters:
@@ -184,7 +184,7 @@ if st.sidebar.button("Calculate"):
             ax.annotate(text, 
                         xy=(0.98, 0.65), 
                         xycoords='axes fraction',
-                        ha='right', 
+                        ha='left', 
                         va='top',
                         fontsize=10,
                         fontfamily='monospace',
