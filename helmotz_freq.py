@@ -234,7 +234,5 @@ with st.expander("Calculation Notes"):
 
     **Experimental Reference:**  
     Values derived from
-    [*Eﬀective conditions for the reﬂection of an 
-acoustic wave by low-porosity perforated 
-plates* (Ingard, 2014)][(https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low_porosity_perforated_plates)]
+    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low_porosity_perforated_plates)
     """, unsafe_allow_html=True)
