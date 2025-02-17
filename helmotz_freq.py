@@ -8,7 +8,7 @@ from io import StringIO
 st.set_page_config(page_title="Helmholtz Resonator", layout="wide")
 
 # Main calculation function
-def calculate_frequency(temperature, thickness_mm, hole_diameter_mm, number_of_holes, material_diameter_mm, airgap_mm, k):
+def calculate_frequency(temperature, thickness_mm, hole_diameter_mm, number_of_holes, material_diameter_mm, airgap_mm, k, frequency=None):
     try:
         # Unit conversions
         c = 331 + 0.6 * temperature  # Speed of sound (m/s)
@@ -45,8 +45,11 @@ def calculate_frequency(temperature, thickness_mm, hole_diameter_mm, number_of_h
 
         # Calculate frequency (if cavity volume, hole area, and effective length are valid)
         if total_hole_area > 0 and cavity_volume > 0 and effective_length > 0:
-            frequency = k * (c / (2 * math.pi)) * math.sqrt(total_hole_area / (cavity_volume * effective_length))
-            return round(frequency, 2)
+            if frequency:
+                return frequency
+            else:
+                frequency = k * (c / (2 * math.pi)) * math.sqrt(total_hole_area / (cavity_volume * effective_length))
+                return round(frequency, 2)
         else:
             raise ValueError("Necessary parameters are missing or incorrect.")
     
@@ -56,6 +59,7 @@ def calculate_frequency(temperature, thickness_mm, hole_diameter_mm, number_of_h
 
 # User interface
 st.title("Helmholtz Resonator Frequency Calculator")
+st.image("https://media.cheggcdn.com/media%2F352%2F352c4c43-1624-4466-b3f7-0854654c3ca1%2FphplUUdj3.png")
 st.markdown("""
 This application calculates the resonance frequency of a Helmholtz resonator based on the provided parameters.
 """)
@@ -82,7 +86,7 @@ with st.sidebar:
         number_of_holes = None
     
     # Varying parameter
-    vary_param = st.selectbox("Vary a Parameter", ["None", "Temperature", "Thickness", "Hole Diameter", "Airgap", "Material Diameter"])
+    vary_param = st.selectbox("Vary a Parameter", ["None", "Temperature", "Thickness", "Hole Diameter", "Airgap", "Material Diameter", "Frequency"])
     
     param_range = None
     if vary_param != "None":
@@ -136,6 +140,8 @@ if st.sidebar.button("Calculate"):
                 params["airgap_mm"] = val
             elif vary_param == "Material Diameter":
                 params["material_diameter_mm"] = val
+            elif vary_param == "Frequency":
+                params["frequency"] = val
             
             # Calculate number of holes if density is used
             if hole_method == "Hole Density":
