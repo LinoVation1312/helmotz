@@ -3,7 +3,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from io import StringIO
+from io import BytesIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 st.set_page_config(page_title="Calculateur de Fréquence de Résonance de Helmholtz", layout="centered")
@@ -165,6 +165,25 @@ if st.sidebar.button("Calculer"):
             data=df.to_csv(index=False).encode('utf-8'),
             file_name='data_frequence_resonance.csv',
             mime='text/csv'
+        )
+        
+        # Save the figure as JPEG and PDF
+        jpeg_buffer = BytesIO()
+        fig.savefig(jpeg_buffer, format='jpeg')
+        st.download_button(
+            label="Télécharger le graphique (JPEG)",
+            data=jpeg_buffer,
+            file_name='graphique_frequence_resonance.jpeg',
+            mime='image/jpeg'
+        )
+        
+        pdf_buffer = BytesIO()
+        fig.savefig(pdf_buffer, format='pdf')
+        st.download_button(
+            label="Télécharger le graphique (PDF)",
+            data=pdf_buffer,
+            file_name='graphique_frequence_resonance.pdf',
+            mime='application/pdf'
         )
 
 # Informations supplémentaires
