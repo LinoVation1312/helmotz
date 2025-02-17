@@ -124,6 +124,75 @@ if st.sidebar.button("Calculer"):
                 "hole_diameter_mm": hole_diameter_mm,
                 "material_diameter_mm": material_diameter_mm,
                 "airgap_mm": airgap_mm,
-               
-::contentReference[oaicite:0]{index=0}
- 
+                "k": k,
+                "number_of_holes": number_of_holes
+            }
+            
+            # Mise à jour du paramètre variable
+            if vary_param == "Température":
+                params["temperature"] = val
+            elif vary_param == "Épaisseur":
+                params["thickness_mm"] = val
+            elif vary_param == "Diamètre du trou":
+                params["hole_diameter_mm"] = val
+            elif vary_param == "Espace d'air":
+                params["airgap_mm"] = val
+            elif vary_param == "Diamètre du matériau":
+                params["material_diameter_mm"] = val
+            
+            # Calcul du nombre de trous si densité est utilisée
+            if hole_method == "Densité de trous":
+                material_area_cm2 = (math.pi * (params["material_diameter_mm"] / 20)**2)
+                params["number_of_holes"] = density * material_area_cm2
+            
+            # Calcul de la fréquence
+            freq = calculate_frequency(**params)
+            frequencies.append(freq)
+            parameters.append(val)
+        
+        # Affichage du graphique
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(parameters, frequencies, 'b-')
+        ax.set_xlabel(vary_param)
+        ax.set_ylabel("Fréquence (Hz)")
+        ax.grid(True)
+        st.pyplot(fig)
+        
+        # Export des données
+        df = pd.DataFrame({"Paramètre": parameters, "Fréquence (Hz)": frequencies})
+        st.download_button(
+            label="Télécharger les données (CSV)",
+            data=df.to_csv(index=False).encode('utf-8'),
+            file_name='data_frequence_resonance.csv',
+            mime='text/csv'
+        )
+
+# Informations supplémentaires
+with st.expander("Théorie et coefficients de correction"):
+    st.markdown("""
+    **Formule utilisée :**
+    
+    La fréquence de résonance est donnée par la formule :
+
+    $$
+    f = k \cdot \frac{c}{2 \pi} \cdot \sqrt{\frac{A}{V \cdot L_{eff}}}
+    $$
+
+    où :
+    - $c$ = vitesse du son ($331 + 0.6 \cdot T^\circ$C)
+    - $A$ = aire totale des trous
+    - $V$ = volume de la cavité
+    - $L_{eff}$ = épaisseur + correction d'extrémité ($0.85 \cdot \text{diamètre du trou}$)
+    - $k$ = coefficient de correction
+    """)
+
+
+    st.markdown("""
+    **Coefficients de correction :**
+    - Ceux-ci dépendent de la géométrie exacte et des conditions aux limites
+    - Valeur par défaut pour k = 1 pour une estimation théorique
+    - À ajuster empiriquement pour correspondre aux mesures réelles
+    """)
+
+st.markdown("---")
+st.caption("Références : [Une bouteille de thé comme résonateur de Helmholtz](https://arxiv.org/abs/2108.00444) | [Étude sur les largeurs de résonance](https://arxiv.org/abs/2203.17216)")
