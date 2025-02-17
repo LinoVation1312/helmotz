@@ -39,19 +39,16 @@ To run this app locally, follow these steps:
    cd helmholtz-resonator-app
 Install Dependencies:
 
-bash
-Copier
-Modifier
+   ```bash
 pip install -r requirements.txt
 Run the App:
-
-bash
-Copier
-Modifier
+```
+ ```bash
 streamlit run app.py
+```
 Access the App:
 
-Open your browser and go to http://localhost:8501.
+Open your browser and go to (https://helmotz.streamlit.app/).
 
 Parameters
 The app uses the following parameters to calculate the resonance frequency:
@@ -83,12 +80,10 @@ License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 Author
-Your Name
-Email: your.email@example.com
 
-csharp
-Copier
-Modifier
+Lino CONORD
+Email: lino.conord@gmail.com
+
 
 **Formatting Notes:**
 
