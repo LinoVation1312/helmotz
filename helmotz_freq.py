@@ -237,5 +237,3 @@ with st.expander("Calculation Notes"):
     Values derived from
     [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low_porosity_perforated_plates)
     """,unsafe_allow_html=True)
-    st.image("https://asa.scitation.org/na101/home/literatum/publisher/asa/journals/content/jasm/2023/jasm.2023.153.issue-1/10.0009873/20230105/images/medium/jas_153_1_0009873_f004.gif")
-    
