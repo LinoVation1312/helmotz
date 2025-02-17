@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from io import StringIO
 
-st.set_page_config(page_title="Helmholtz Resonator", layout="center")
+st.set_page_config(page_title="Helmholtz Resonator", layout="centered")
 
 # Main calculation function
 def calculate_frequency(temperature, thickness_mm, hole_diameter_mm, number_of_holes, material_diameter_mm, airgap_mm, k):
