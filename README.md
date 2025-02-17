@@ -96,8 +96,6 @@ Email: lino.conord@gmail.com
 For more detailed information on Markdown formatting, you can refer to GitHub's documentation on [Creating and highlighting code blocks](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks) and [Basic writing and formatting syntax](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
 
 If you have any further questions or need additional assistance, feel free to ask!
-::contentReference[oaicite:2]{index=2}
- 
 
 
 
