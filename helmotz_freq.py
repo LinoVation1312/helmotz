@@ -4,211 +4,196 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from io import BytesIO
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 st.set_page_config(page_title="Helmholtz Resonance Calculator", layout="centered")
 
-def calculate_holes_from_spacing(material_diameter_mm, d_spacing_mm):
+def calculate_holes_from_spacing(D_mm, spacing_mm):
     """Calculate number of holes in square arrangement within a circle"""
-    D = material_diameter_mm
-    d = d_spacing_mm
-    radius = D / 2.0
-    max_holes_per_axis = int(D // d)
-    start = -((max_holes_per_axis - 1) * d) / 2.0
-    positions = [start + i*d for i in range(max_holes_per_axis)]
-    total_holes = 0
-    
-    for x in positions:
-        for y in positions:
-            if math.sqrt(x**2 + y**2) <= radius:
-                total_holes += 1
-    return total_holes
+    radius = D_mm / 2
+    grid_points = int(D_mm // spacing_mm)
+    start = -((grid_points - 1) * spacing_mm) / 2
+    positions = [start + i*spacing_mm for i in range(grid_points)]
+    return sum(1 for x in positions for y in positions if math.hypot(x, y) <= radius)
 
-def calculate_metrics(params):
-    """Calculate all acoustic metrics without frequency"""
+def calculate_metrics(inputs):
+    """Calculate all acoustic parameters and frequency"""
     try:
-        # Convert units
-        material_area_mm2 = math.pi * (params['material_diameter_mm']/2)**2
-        material_area_cm2 = material_area_mm2 / 100
+        # Convert units to meters
+        c = 20.05 * math.sqrt(273.15 + inputs['temp'])
+        D = inputs['D'] / 1000
+        t = inputs['t'] / 1000
+        d = inputs['d'] / 1000
+        L = inputs['L'] / 1000
         
-        # Hole calculations
-        hole_area_mm2 = math.pi * (params['hole_diameter_mm']/2)**2
-        total_hole_area_mm2 = params['number_of_holes'] * hole_area_mm2
+        # Material area calculations
+        material_area = math.pi * (D/2)**2
+        hole_area = math.pi * (d/2)**2
         
-        # Acoustic opening percentage
-        OA_percentage = (total_hole_area_mm2 / material_area_mm2) * 100 if material_area_mm2 > 0 else 0
-        
-        # Density and spacing calculations
-        if params['calculation_mode'] == "Hole Spacing":
-            # Exact density calculation for square pattern
-            density = 100 / (params['d_spacing_mm']**2)  # Exact 1/cm² conversion
-            spacing = params['d_spacing_mm']
-        else:
-            density = params['number_of_holes'] / material_area_cm2 if material_area_cm2 > 0 else 0
-            spacing = math.sqrt(100 / density) if density > 0 else 0  # mm between holes
+        # Calculate number of holes based on input mode
+        if inputs['mode'] == 'Number':
+            N = inputs['N']
+        elif inputs['mode'] == 'Density':
+            N = int(inputs['density'] * (material_area * 10000))  # m² to cm²
+        elif inputs['mode'] == 'OA%':
+            N = int((inputs['OA']/100 * material_area) / hole_area)
+        else:  # Spacing mode
+            N = calculate_holes_from_spacing(inputs['D'], inputs['spacing'])
 
+        # Final calculations
+        A = N * hole_area
+        V = material_area * L
+        Leff = t + 2 * 0.85 * (d/2)
+        
+        if A * V * Leff == 0:
+            raise ValueError("Invalid parameters combination")
+            
+        f0 = inputs['k'] * (c / (2 * math.pi)) * math.sqrt(A / (V * Leff))
+        
         return {
-            'OA%': OA_percentage,
-            'density': density,
-            'spacing': spacing,
-            'holes': params['number_of_holes']
+            'f0': f0,
+            'OA%': (A / material_area) * 100,
+            'density': N / (material_area * 10000),
+            'spacing': math.sqrt(1 / (N / (material_area * 10000))) * 10 if N else 0,
+            'N': N
         }
-    
+        
     except Exception as e:
-        st.error(f"Calculation error: {str(e)}")
+        st.error(f"Error: {str(e)}")
         return None
 
-# User interface
-st.title("Acoustic Perforation Calculator")
+# Interface
+st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
-    st.image("https://media.cheggcdn.com/media%2F352%2F352c4c43-1624-4466-b3f7-0854654c3ca1%2FphplUUdj3.png")
     st.markdown("""
-    **Key metrics:**
-    - OA% (Open Area): Total hole area / Material area × 100
-    - Density: Holes per cm²
-    - Spacing: Distance between hole centers (mm)
+    **Resonance frequency formula:**
+    $$
+    f_0 = \\frac{k}{2\\pi} \\sqrt{\\frac{A}{V \\cdot L_{eff}}}
+    $$
+    where:
+    - $A$: Total hole area ($m^2$)
+    - $V$: Cavity volume ($m^3$)
+    - $L_{eff}$: Effective neck length ($t + 2 \\times 0.85r$)
+    - $k$: Empirical correction factor
     """)
 
 with st.sidebar:
-    st.header("Input Parameters")
-    material_diameter_mm = st.number_input("Material diameter (mm)", 1.0, 1000.0, 100.0)
-    hole_diameter_mm = st.number_input("Hole diameter (mm)", 0.1, 50.0, 5.0)
+    st.header("Main Parameters")
+    inputs = {
+        'temp': st.number_input("Temperature (°C)", -20.0, 100.0, 20.0),
+        'D': st.number_input("Material diameter (mm)", 10.0, 1000.0, 100.0),
+        't': st.number_input("Material thickness (mm)", 0.1, 50.0, 1.0),
+        'd': st.number_input("Hole diameter (mm)", 0.1, 50.0, 5.0),
+        'L': st.number_input("Air gap (mm)", 0.1, 100.0, 10.0),
+        'k': st.number_input("Correction factor (k)", 0.1, 2.0, 1.0, 0.1)
+    }
     
-    calculation_mode = st.radio("Calculation Mode", 
-                               ["Number of Holes", "Hole Density", "Hole Spacing"])
+    calc_mode = st.radio("Calculation mode:", 
+                        ["Number", "Density", "OA%", "Spacing"])
     
-    if calculation_mode == "Number of Holes":
-        number_of_holes = st.number_input("Number of holes", 1, 10000, 100)
-    elif calculation_mode == "Hole Density":
-        target_density = st.number_input("Target density (holes/cm²)", 0.1, 1000.0, 10.0)
+    if calc_mode == "Number":
+        inputs['N'] = st.number_input("Number of holes", 1, 10000, 100)
+    elif calc_mode == "Density":
+        inputs['density'] = st.number_input("Holes/cm²", 0.1, 100.0, 10.0)
+    elif calc_mode == "OA%":
+        inputs['OA'] = st.number_input("Open Area (%)", 0.1, 100.0, 5.0)
     else:
-        d_spacing_mm = st.number_input("Center-to-center spacing (mm)", 0.1, 100.0, 2.0)
+        inputs['spacing'] = st.number_input("Hole spacing (mm)", 0.1, 100.0, 10.0)
 
-    # Variable parameter analysis
-    vary_param = st.selectbox("Parameter analysis", 
-                             ["None", "Hole diameter", "Spacing", "Material diameter"])
+    st.header("Parameter Analysis")
+    vary_param = st.selectbox("Vary parameter:", ["None", "Temperature", "Thickness",
+                                                "Hole diameter", "Air gap", 
+                                                "Material diameter", "Hole density",
+                                                "Number of holes", "OA%", 
+                                                "Hole spacing"])
     
     param_range = None
     if vary_param != "None":
         st.subheader("Variation Range")
-        min_val = st.number_input("Min value", 0.1, 1000.0, 1.0)
-        max_val = st.number_input("Max value", 0.1, 1000.0, 10.0)
-        steps = st.number_input("Data points", 10, 1000, 50)
+        min_val = st.number_input("Min value", value=1.0)
+        max_val = st.number_input("Max value", value=10.0)
+        steps = st.number_input("Steps", 10, 1000, 50)
         param_range = np.linspace(min_val, max_val, steps)
 
 if st.sidebar.button("Calculate"):
-    # Calculate base parameters
-    params = {
-        'material_diameter_mm': material_diameter_mm,
-        'hole_diameter_mm': hole_diameter_mm,
-        'calculation_mode': calculation_mode,
-        'number_of_holes': 0  # Initialize
-    }
-
-    # Calculate initial hole count
-    if calculation_mode == "Number of Holes":
-        params['number_of_holes'] = number_of_holes
-    elif calculation_mode == "Hole Density":
-        material_area_cm2 = (math.pi * (material_diameter_mm/20)**2)
-        params['number_of_holes'] = int(target_density * material_area_cm2)
-    else:  # Hole Spacing
-        params['d_spacing_mm'] = d_spacing_mm
-        params['number_of_holes'] = calculate_holes_from_spacing(material_diameter_mm, d_spacing_mm)
-
-    # Calculate and display metrics
-    metrics = calculate_metrics(params)
-    if metrics:
-        st.subheader("Results")
-        col1, col2, col3, col4 = st.columns(4)
-        with col1: st.metric("Open Area (OA%)", f"{metrics['OA%']:.2f}%")
-        with col2: st.metric("Hole density", f"{metrics['density']:.2f}/cm²")
-        with col3: st.metric("Hole spacing", f"{metrics['spacing']:.2f} mm")
-        with col4: st.metric("Total holes", int(metrics['holes']))
-
-    # Parameter variation analysis
-    if vary_param != "None" and param_range is not None:
-        results = []
-        for val in param_range:
+    results = []
+    base_inputs = inputs.copy()
+    
+    if vary_param == "None":
+        metrics = calculate_metrics(base_inputs)
+        if metrics:
+            st.subheader("Results")
+            cols = st.columns(4)
+            cols[0].metric("Resonance Frequency", f"{metrics['f0']:.1f} Hz")
+            cols[1].metric("Open Area", f"{metrics['OA%']:.1f}%")
+            cols[2].metric("Hole Density", f"{metrics['density']:.1f}/cm²")
+            cols[3].metric("Hole Spacing", f"{metrics['spacing']:.1f} mm")
+    else:
+        progress = st.progress(0)
+        for i, val in enumerate(param_range):
+            current = base_inputs.copy()
+            
             # Update varying parameter
-            if vary_param == "Hole diameter":
-                params['hole_diameter_mm'] = val
-            elif vary_param == "Spacing":
-                params['d_spacing_mm'] = val
-                params['number_of_holes'] = calculate_holes_from_spacing(
-                    params['material_diameter_mm'], val)
+            if vary_param == "Temperature":
+                current['temp'] = val
+            elif vary_param == "Thickness":
+                current['t'] = val
+            elif vary_param == "Hole diameter":
+                current['d'] = val
+            elif vary_param == "Air gap":
+                current['L'] = val
             elif vary_param == "Material diameter":
-                params['material_diameter_mm'] = val
-                if calculation_mode == "Hole Density":
-                    params['number_of_holes'] = int(target_density * 
-                                                  (math.pi * (val/20)**2))
-
-            # Calculate metrics
-            metrics = calculate_metrics(params)
+                current['D'] = val
+            elif vary_param == "Hole density":
+                current['density'] = val
+                current['mode'] = "Density"
+            elif vary_param == "Number of holes":
+                current['N'] = int(val)
+                current['mode'] = "Number"
+            elif vary_param == "OA%":
+                current['OA'] = val
+                current['mode'] = "OA%"
+            else:  # Hole spacing
+                current['spacing'] = val
+                current['mode'] = "Spacing"
+            
+            metrics = calculate_metrics(current)
             if metrics:
-                results.append({
-                    'parameter': val,
-                    'OA%': metrics['OA%'],
-                    'density': metrics['density'],
-                    'spacing': metrics['spacing'],
-                    'holes': metrics['holes']
-                })
-
-        # Create visualizations
+                results.append({'x': val, 'f0': metrics['f0'], **metrics})
+            progress.progress((i+1)/len(param_range))
+        
         if results:
             df = pd.DataFrame(results)
             
-            # Create figure with subplots
-            fig, axs = plt.subplots(2, 2, figsize=(12, 10))
-            plt.tight_layout(pad=4.0)
+            # Create plot
+            fig, ax = plt.subplots(figsize=(10,6))
+            ax.plot(df['x'], df['f0'], 'b-', lw=2)
+            ax.set_xlabel(vary_param)
+            ax.set_ylabel("Resonance Frequency (Hz)")
+            ax.grid(True)
             
-            # Plot OA%
-            axs[0,0].plot(df['parameter'], df['OA%'], 'b-')
-            axs[0,0].set_title("Open Area Percentage")
-            axs[0,0].set_xlabel(vary_param)
-            axs[0,0].set_ylabel("OA (%)")
-            axs[0,0].grid(True)
+            # Add annotations
+            text = f"""
+            Final values:
+            - OA%: {df['OA%'].iloc[-1]:.1f}%
+            - Density: {df['density'].iloc[-1]:.1f}/cm²
+            - Spacing: {df['spacing'].iloc[-1]:.1f} mm
+            - Holes: {int(df['N'].iloc[-1])}
+            """
+            ax.annotate(text, xy=(0.98, 0.5), xycoords='axes fraction',
+                       ha='right', va='center', fontsize=10,
+                       bbox=dict(boxstyle='round', alpha=0.2))
             
-            # Plot Density
-            axs[0,1].plot(df['parameter'], df['density'], 'r-')
-            axs[0,1].set_title("Hole Density")
-            axs[0,1].set_xlabel(vary_param)
-            axs[0,1].set_ylabel("Holes/cm²")
-            axs[0,1].grid(True)
-            
-            # Plot Spacing
-            axs[1,0].plot(df['parameter'], df['spacing'], 'g-')
-            axs[1,0].set_title("Hole Spacing")
-            axs[1,0].set_xlabel(vary_param)
-            axs[1,0].set_ylabel("mm")
-            axs[1,0].grid(True)
-            
-            # Plot Total Holes
-            axs[1,1].plot(df['parameter'], df['holes'], 'm-')
-            axs[1,1].set_title("Total Holes")
-            axs[1,1].set_xlabel(vary_param)
-            axs[1,1].set_ylabel("Count")
-            axs[1,1].grid(True)
-
             st.pyplot(fig)
             
             # Export options
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("Download Data (CSV)", csv, 
-                             "perforation_analysis.csv", "text/csv")
+            if st.button("Download Data (CSV)"):
+                csv = df.to_csv(index=False).encode()
+                st.download_button("Download", csv, "data.csv", "text/csv")
 
 with st.expander("Calculation Notes"):
     st.markdown("""
-    **Key Formulas:**
-    - Open Area %: 
-      $$ OA = \\frac{N \\cdot \\pi (d_h/2)^2}{\\pi (D_m/2)^2} \\times 100 $$
-    - Hole Density (square pattern): 
-      $$ \\rho = \\frac{100}{(s_{mm})^2} $$
-    - Hole Spacing: 
-      $$ s = \\sqrt{\\frac{100}{\\rho}} $$
-    Where:
-    - \( N \) = number of holes
-    - \( d_h \) = hole diameter (mm)
-    - \( D_m \) = material diameter (mm)
-    - \( s_{mm} \) = center-to-center spacing (mm)
-    - \( \\rho \) = hole density (holes/cm²)
+    **Key relationships:**
+    - OA% = (Total Hole Area / Material Area) × 100
+    - Density = 100 / (spacing²) [holes/cm²]
+    - Spacing = 10 / sqrt(density) [mm]
     """)
