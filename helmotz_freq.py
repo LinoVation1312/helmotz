@@ -65,20 +65,6 @@ def calculate_metrics(inputs):
         return None
 
 # Interface
-st.title("Helmholtz Resonance Calculator")
-with st.expander("Theory"):
-    st.markdown("""
-    **Resonance frequency formula:**
-    $$
-    f_0 = k \\cdot \\frac{c}{2\\pi} \\sqrt{\\frac{A}{V \\cdot L_{eff}}}
-    $$
-    where:
-    - $c$ = speed of sound (≈343 m/s at 20°C)
-    - $A$ = total hole area
-    - $V$ = cavity volume
-    - $L_{eff}$ = effective neck length
-    - $k$ = correction factor
-    """)
 
 with st.sidebar:
     st.header("Main Parameters")
@@ -215,6 +201,23 @@ if st.sidebar.button("Calculate"):
             csv = df.to_csv(index=False).encode()
             st.download_button("Download CSV Data", csv, 
                              "frequency_data.csv", "text/csv")
+
+st.title("Helmholtz Resonance Calculator")
+with st.expander("Theory"):
+    st.markdown("""
+    **Resonance frequency formula:**
+    $$
+    f_0 = k \\cdot \\frac{c}{2\\pi} \\sqrt{\\frac{A}{V \\cdot L_{eff}}}
+    $$
+    where:
+    - $c$ = speed of sound (≈343 m/s at 20°C)
+    - $A$ = total hole area
+    - $V$ = cavity volume
+    - $L_{eff}$ = effective neck length
+    - $k$ = correction factor
+    """)
+    st.image("https://media.cheggcdn.com/media%2F352%2F352c4c43-1624-4466-b3f7-0854654c3ca1%2FphplUUdj3.png")
+
 
 with st.expander("Calculation Notes"):
     st.markdown("""
