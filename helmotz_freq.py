@@ -233,6 +233,8 @@ with st.expander("Calculation Notes"):
     - High temperature (>80°C → k ↑ 5-8%)
 
     **Experimental Reference:**  
-    Values derived from 150+ configurations in:
-    [*Theory of Perforated Plates* (Ingard, 2014)](https://doi.org/10.1017/CBO9780511626561)
+    Values derived from
+    [*Eﬀective conditions for the reﬂection of an 
+acoustic wave by low-porosity perforated 
+plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low_porosity_perforated_plates)
     """, unsafe_allow_html=True)
