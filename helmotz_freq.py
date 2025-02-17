@@ -179,23 +179,38 @@ if st.sidebar.button("Calculate"):
             
             # Create plot
             fig, ax = plt.subplots(figsize=(10,6))
-            ax.plot(df['x'], df['f0'], 'b-', lw=2)
-            ax.set_xlabel(vary_param)
-            ax.set_ylabel("Resonance Frequency (Hz)")
-            ax.grid(True)
+            ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
             
-            # Add annotations
+            # Configuration du graphique
+            title = f"Helmholtz Resonance Frequency vs. {vary_param}"
+            ax.set_title(title, fontsize=14, pad=20)
+            ax.set_xlabel(vary_param, fontsize=12)
+            ax.set_ylabel("Frequency (Hz)", fontsize=12)
+            ax.grid(True, alpha=0.3)
+            
+            # Légende améliorée
             text = f"""Final Parameters:
             - OA%: {df['OA%'].iloc[-1]:.1f}%
             - Density: {df['density'].iloc[-1]:.1f}/cm²
             - Spacing: {df['spacing'].iloc[-1]:.1f} mm
             - Holes: {int(df['N'].iloc[-1])}"""
-            ax.annotate(text, xy=(0.98, 0.3), xycoords='axes fraction',
-                       ha='right', va='center', fontsize=9,
-                       bbox=dict(boxstyle='round', alpha=0.2))
             
-            st.pyplot(fig)
+            ax.annotate(text, 
+                        xy=(0.98, 0.65), 
+                        xycoords='axes fraction',
+                        ha='right', 
+                        va='top',
+                        fontsize=10,
+                        fontfamily='monospace',
+                        bbox=dict(boxstyle='round', 
+                                facecolor='white', 
+                                alpha=0.8,
+                                edgecolor='lightgray'))
             
+            # Ajout d'une légende standard
+            ax.legend(loc='upper left', framealpha=0.8)
+            
+            st.pyplot(fig)       
             # Export data
             csv = df.to_csv(index=False).encode()
             st.download_button("Download CSV Data", csv, 
