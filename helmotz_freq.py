@@ -180,7 +180,8 @@ if st.sidebar.button("Calculate"):
             - Holes: {int(df['N'].iloc[-1])}
             - Hole diameter: {inputs['d']} mm
             - Material thickness: {inputs['t']} mm
-            - Air gap: {inputs['L']} mm"""
+            - Air gap: {inputs['L']} mm
+            - OA%: {df['OA%'].iloc[-1]:.2f}%"""
             
             ax.annotate(text, 
                         xy=(0.50, 0.75), 
