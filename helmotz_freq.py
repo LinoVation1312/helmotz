@@ -37,8 +37,10 @@ def calculate_metrics(inputs):
         elif mode == 'OA%':
             N = int((inputs['OA'] / 100 * material_area) / hole_area)
         else:  # Spacing
-            spacing = inputs['spacing'] / 10  # Convert mm to cm
-            N = int(material_area / (spacing ** 2))
+            spacing_mm = inputs['spacing']
+            spacing_cm = spacing_mm / 10
+            density = 1 / (spacing_cm ** 2)
+            N = int(density * (material_area * 10000))
             N = max(N, 1)
 
         # Final calculations
@@ -51,9 +53,15 @@ def calculate_metrics(inputs):
             
         f0 = inputs['k'] * (c / (2 * math.pi)) * math.sqrt(A / (V * Leff))
         
+        # Calculate OA% for Spacing mode
+        if mode == 'Spacing':
+            OA_percent = ((math.pi * (d * 1000) ** 2) / (4 * (spacing_mm ** 2)) * 100
+        else:
+            OA_percent = (A / material_area) * 100
+        
         return {
             'f0': f0,
-            'OA%': (A / material_area) * 100,
+            'OA%': OA_percent,
             'density': N / (material_area * 10000),
             'spacing': math.sqrt(1 / (N / (material_area * 10000))) * 10 if N else 0,
             'N': N
