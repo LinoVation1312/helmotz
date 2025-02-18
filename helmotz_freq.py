@@ -184,11 +184,11 @@ if st.sidebar.button("Calculate"):
 - OA%: {df['OA%'].iloc[-1]:.2f}%"""
             
             ax.annotate(text, 
-                        xy=(0.50, 0.75), 
+                        xy=(0.75, 0.75), 
                         xycoords='axes fraction',
                         ha='left', 
                         va='top',
-                        fontsize=10,
+                        fontsize=12,
                         fontfamily='monospace',
                         bbox=dict(boxstyle='round', 
                                 facecolor='white', 
