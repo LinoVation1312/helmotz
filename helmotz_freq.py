@@ -176,12 +176,12 @@ if st.sidebar.button("Calculate"):
             # Légende améliorée
             density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.2f}"
             text = f"""Final Parameters:
-            - Density: {density}/cm²
-            - Holes: {int(df['N'].iloc[-1])}
-            - Hole diameter: {inputs['d']} mm
-            - Material thickness: {inputs['t']} mm
-            - Air gap: {inputs['L']} mm
-            - OA%: {df['OA%'].iloc[-1]:.2f}%"""
+                - Density: {density}/cm²
+                - Holes: {int(df['N'].iloc[-1])}
+                - Hole diameter: {inputs['d']} mm
+                - Material thickness: {inputs['t']} mm
+                - Air gap: {inputs['L']} mm
+                - OA%: {df['OA%'].iloc[-1]:.2f}%"""
             
             ax.annotate(text, 
                         xy=(0.50, 0.75), 
