@@ -62,6 +62,7 @@ def calculate_metrics(inputs):
     except Exception as e:
         st.error(f"Calculation error: {str(e)}")
         return None
+        
         # Final calculations
         A = N * hole_area
         V = material_area * L
