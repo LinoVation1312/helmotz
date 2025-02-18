@@ -70,10 +70,10 @@ with st.sidebar:
     st.header("Main Parameters")
     inputs = {
         'temp': st.number_input("Temperature (°C)", -20.0, 100.0, 20.0),
-        'D': st.number_input("Material diameter (mm)",10.0, 1000.0, 100.0),
-        't': st.number_input("Material thickness (mm)",0.1, 50.0, 1.0),
+        'D': st.number_input("Material diameter (mm)",5.0, 1000.0, 100.0),
+        't': st.number_input("Material thickness (mm)",0.05, 50.0, 1.0),
         'd': st.number_input("Hole diameter (mm)",0.1, 50.0, 5.0),
-        'L': st.number_input("Air gap (mm)",0.1, 100.0, 10.0),
+        'L': st.number_input("Air gap (mm)",0, 100.0, 10.0),
         'k': st.number_input("Correction factor (k)",0.1, 2.0, 1.0, 0.1)
     }
     
@@ -84,7 +84,7 @@ with st.sidebar:
     if calc_mode == "Number":
         inputs['N'] = st.number_input("Number of holes",1, 10000, 100)
     elif calc_mode == "Density":
-        inputs['density'] = st.number_input("Holes/cm²",0.1, 100.0, 10.0)
+        inputs['density'] = st.number_input("Holes/cm²",0.001, 100.0, 10.0)
     elif calc_mode == "OA%":
         inputs['OA'] = st.number_input("Open Area (%)",0.1, 100.0, 5.0)
     else:
