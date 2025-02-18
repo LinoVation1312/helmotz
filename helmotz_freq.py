@@ -7,15 +7,12 @@ from io import BytesIO
 
 st.set_page_config(page_title="Helmholtz Resonance Calculator", layout="centered")
 
-
-
-
 def calculate_holes_from_spacing(D_mm, spacing_mm):
     """Calculate number of holes in square arrangement within a circle"""
     radius = D_mm / 2
     grid_points = int(D_mm // spacing_mm)
     start = -((grid_points - 1) * spacing_mm) / 2
-    positions = [start + i*spacing_mm for i in range(grid_points)]
+    positions = [start + i * spacing_mm for i in range(grid_points)]
     return sum(1 for x in positions for y in positions if math.hypot(x, y) <= radius)
 
 def calculate_metrics(inputs):
@@ -24,14 +21,14 @@ def calculate_metrics(inputs):
         mode = inputs.get('mode', 'Number')
         
         # Unit conversions
-        c = 20.05 * math.sqrt(273.15 + inputs['temp'])*1000
+        c = 20.05 * math.sqrt(273.15 + inputs['temp']) * 1000
         D = inputs['D']
         t = inputs['t']
         d = inputs['d']
         L = inputs['L']
         # Material area calculations
-        material_area = math.pi * (D/2)**2
-        hole_area = math.pi * (d/2)**2
+        material_area = math.pi * (D / 2) ** 2
+        hole_area = math.pi * (d / 2) ** 2
         
         # Calculate number of holes
         if mode == 'Number':
@@ -39,9 +36,9 @@ def calculate_metrics(inputs):
         elif mode == 'Density':
             N = int(inputs['density'] * (material_area * 10000))
         elif mode == 'OA%':
-            N = int((inputs['OA']/100 * material_area) / hole_area)
+            N = int((inputs['OA'] / 100 * material_area) / hole_area)
         else:  # Spacing
-            N = calculate_holes_from_spacing(inputs['D']*1000, inputs['spacing'])
+            N = calculate_holes_from_spacing(inputs['D'] * 1000, inputs['spacing'])
             N = max(N, 1)
 
         # Final calculations
@@ -58,7 +55,7 @@ def calculate_metrics(inputs):
             'f0': f0,
             'OA%': (A / material_area) * 100,
             'density': N / (material_area * 10000),
-            'spacing': math.sqrt(1/(N/(material_area*10000)))*10 if N else 0,
+            'spacing': math.sqrt(1 / (N / (material_area * 10000))) * 10 if N else 0,
             'N': N
         }
         
@@ -72,11 +69,11 @@ with st.sidebar:
     st.header("Main Parameters")
     inputs = {
         'temp': st.number_input("Temperature (°C)", -20.0, 250.0, 20.0),
-        'D': st.number_input("Material diameter (mm)",5.0, 1000.0, 100.0),
-        't': st.number_input("Material thickness (mm)",0.05, 50.0, 1.0),
-        'd': st.number_input("Hole diameter (mm)",0.1, 50.0, 5.0),
-        'L': st.number_input("Air gap (mm)",0.01, 100.0, 10.0),
-        'k': st.number_input("Correction factor (k)",0.1, 2.0, 1.0, 0.1)
+        'D': st.number_input("Material diameter (mm)", 5.0, 1000.0, 100.0),
+        't': st.number_input("Material thickness (mm)", 0.05, 50.0, 1.0),
+        'd': st.number_input("Hole diameter (mm)", 0.1, 50.0, 5.0),
+        'L': st.number_input("Air gap (mm)", 0.01, 100.0, 10.0),
+        'k': st.number_input("Correction factor (k)", 0.1, 2.0, 1.0, 0.1)
     }
     
     calc_mode = st.radio("Calculation mode:", 
@@ -84,13 +81,13 @@ with st.sidebar:
     inputs['mode'] = calc_mode
     
     if calc_mode == "Number":
-        inputs['N'] = st.number_input("Number of holes",1, 10000, 100)
+        inputs['N'] = st.number_input("Number of holes", 1, 10000, 100)
     elif calc_mode == "Density":
-        inputs['density'] = st.number_input("Holes/cm²",0.001, 100.0, 10.0)
+        inputs['density'] = st.number_input("Holes/cm²", 0.001, 100.0, 10.0)
     elif calc_mode == "OA%":
-        inputs['OA'] = st.number_input("Open Area (%)",0.1, 100.0, 5.0)
+        inputs['OA'] = st.number_input("Open Area (%)", 0.1, 100.0, 5.0)
     else:
-        inputs['spacing'] = st.number_input("Hole spacing (mm)",0.1, 100.0, 10.0)
+        inputs['spacing'] = st.number_input("Hole spacing (mm)", 0.1, 100.0, 10.0)
 
     st.header("Parameter Analysis")
     vary_params = [
@@ -106,7 +103,7 @@ with st.sidebar:
         st.subheader("Variation Range")
         min_val = st.number_input("Min value", value=1.0)
         max_val = st.number_input("Max value", value=10.0)
-        steps = st.number_input("Steps",10, 1000, 50)
+        steps = st.number_input("Steps", 10, 1000, 50)
         param_range = np.linspace(min_val, max_val, steps)
 
 if st.sidebar.button("Calculate"):
@@ -160,13 +157,13 @@ if st.sidebar.button("Calculate"):
             metrics = calculate_metrics(current)
             if metrics:
                 results.append({'x': val, 'f0': metrics['f0'], **metrics})
-            progress.progress((i+1)/len(param_range))
+            progress.progress((i + 1) / len(param_range))
         
         if results:
             df = pd.DataFrame(results)
             
             # Create plot
-            fig, ax = plt.subplots(figsize=(10,6))
+            fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
             
             # Configuration du graphique
@@ -195,18 +192,17 @@ if st.sidebar.button("Calculate"):
                                 alpha=0.8,
                                 edgecolor='lightgray'))
             
-
-# Afficher le plot
-            st.pyplot(fig)
-            
-            col1, col2, col3 = st.columns(3)
-            
             # Préparer les buffers en dehors des boutons
             png_buf = BytesIO()
             pdf_buf = BytesIO()
             fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
             fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
             csv = df.to_csv(index=False).encode()
+            
+            # Afficher le plot
+            st.pyplot(fig)
+            
+            col1, col2, col3 = st.columns(3)
             
             with col1:
                 st.download_button(
@@ -264,5 +260,5 @@ with st.expander("Calculation Notes"):
 
     **Experimental Reference:**  
     Values derived from
-    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low_porosity_perforated_plates)
-    """,unsafe_allow_html=True)
+    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_a[...]
+    """, unsafe_allow_html=True)
