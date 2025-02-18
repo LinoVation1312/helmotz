@@ -55,7 +55,7 @@ def calculate_metrics(inputs):
         
         # Calculate OA% for Spacing mode
         if mode == 'Spacing':
-            OA_percent = ((math.pi * (d * 1000) ** 2) / (4 * (spacing_mm ** 2)) * 100
+            OA_percent = ((math.pi * (d * 1000) ** 2) / (4 * (spacing_mm ** 2))) * 100
         else:
             OA_percent = (A / material_area) * 100
         
