@@ -196,14 +196,17 @@ if st.sidebar.button("Calculate"):
                                 edgecolor='lightgray'))
             
 
-            # Afficher le plot
+# Afficher le plot
             st.pyplot(fig)
             
-            # Export PNG
-            png_buf = BytesIO()
-            fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
-            
             col1, col2, col3 = st.columns(3)
+            
+            # Préparer les buffers en dehors des boutons
+            png_buf = BytesIO()
+            pdf_buf = BytesIO()
+            fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
+            fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
+            csv = df.to_csv(index=False).encode()
             
             with col1:
                 st.download_button(
@@ -214,8 +217,6 @@ if st.sidebar.button("Calculate"):
                 )
             
             with col2:
-                pdf_buf = BytesIO()
-                fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
                 st.download_button(
                     label="Download PDF",
                     data=pdf_buf.getvalue(),
@@ -224,7 +225,6 @@ if st.sidebar.button("Calculate"):
                 )
             
             with col3:
-                csv = df.to_csv(index=False).encode()
                 st.download_button(
                     "Download CSV",
                     csv,
