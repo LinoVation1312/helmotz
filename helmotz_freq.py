@@ -225,7 +225,6 @@ with st.expander("Calculation Notes"):
     - **0.50** - Closely spaced holes (spacing < 2×diameter) with aerodynamic interactions
     - **0.60** - Porous composite materials (acoustic foam + rigid plate)
     - **0.72** - Rectangular perforations (2:1 aspect ratio)
-    - **0.80** - Conical holes (flared cavity side)
     - **0.92** - Multi-layer systems (2 parallel plates)
     - **1.05** - Openings with debris screens
     - **1.25** - Serially coupled resonators
@@ -233,8 +232,6 @@ with st.expander("Calculation Notes"):
     **Variation Sources:**
     - Hole shape (round vs. slot vs. hexagonal)
     - Internal surface roughness
-    - Through-airflow (>2 m/s → k ↓ 10-15%)
-    - High temperature (>80°C → k ↑ 5-8%)
 
 
     **Experimental Reference:**  
