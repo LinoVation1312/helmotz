@@ -14,7 +14,6 @@ def calculate_holes_from_spacing(D_mm, spacing_mm):
     start = -((grid_points - 1) * spacing_mm) / 2
     positions = [start + i * spacing_mm for i in range(grid_points)]
     return sum(1 for x in positions for y in positions if math.hypot(x, y) <= radius)
-
 def calculate_metrics(inputs):
     """Calculate all acoustic parameters and frequency"""
     try:
@@ -22,10 +21,10 @@ def calculate_metrics(inputs):
         
         # Unit conversions
         c = 20.05 * math.sqrt(273.15 + inputs['temp']) 
-        D = inputs['D']/1000
-        t = inputs['t']/1000
-        d = inputs['d']/1000
-        L = inputs['L']/1000
+        D = inputs['D'] / 1000
+        t = inputs['t'] / 1000
+        d = inputs['d'] / 1000
+        L = inputs['L'] / 1000
         # Material area calculations
         material_area = math.pi * (D / 2) ** 2
         hole_area = math.pi * (d / 2) ** 2
@@ -38,9 +37,31 @@ def calculate_metrics(inputs):
         elif mode == 'OA%':
             N = int((inputs['OA'] / 100 * material_area) / hole_area)
         else:  # Spacing
-            N = calculate_holes_from_spacing(inputs['D'] * 1000, inputs['spacing'])
+            spacing = inputs['spacing'] / 10  # Convert mm to cm
+            N = int(material_area / (spacing ** 2))
             N = max(N, 1)
 
+        # Final calculations
+        A = N * hole_area
+        V = material_area * L
+        Leff = t
+        
+        if A * V * Leff == 0:
+            raise ValueError("Invalid parameters combination")
+            
+        f0 = inputs['k'] * (c / (2 * math.pi)) * math.sqrt(A / (V * Leff))
+        
+        return {
+            'f0': f0,
+            'OA%': (A / material_area) * 100,
+            'density': N / (material_area * 10000),
+            'spacing': math.sqrt(1 / (N / (material_area * 10000))) * 10 if N else 0,
+            'N': N
+        }
+        
+    except Exception as e:
+        st.error(f"Calculation error: {str(e)}")
+        return None
         # Final calculations
         A = N * hole_area
         V = material_area * L
