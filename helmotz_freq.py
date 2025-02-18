@@ -305,6 +305,7 @@ with st.expander("Calculation Notes"):
 
     **Experimental Reference:**  
     Values derived from
-    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)(https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_a[...]""", unsafe_allow_html=True)]
+    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low-porosity_perforated_plates)
+    """, unsafe_allow_html=True)
 
 st.image("http://static1.squarespace.com/static/658043d6c66e634cdbc7a4cc/t/65b2a24c41f1487f15750d7f/1706205772677/Logo-Lydech-avec-baseline-h240.png?format=1500w")
