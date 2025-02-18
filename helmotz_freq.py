@@ -290,7 +290,7 @@ with st.expander("Theory"):
 
 with st.expander("Calculation Notes"):
     st.markdown("""
-    **Correction Factor (k) - Extended Reference:**
+    **Correction Factor (k) - Common Values:**
     - **0.50** - Closely spaced holes (spacing < 2×diameter) with aerodynamic interactions
     - **0.60** - Porous composite materials (acoustic foam + rigid plate)
     - **0.72** - Rectangular perforations (2:1 aspect ratio)
@@ -299,11 +299,11 @@ with st.expander("Calculation Notes"):
     - **1.25** - Serially coupled resonators
 
     **Variation Sources:**
-    - Hole shape (round vs. slot vs. hexagonal)
+    - Hole shape (round vs. slot vs. hexagonal ...)
     - Internal surface roughness
 
 
     **Experimental Reference:**  
     Values derived from
-    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_a[...]
-    """, unsafe_allow_html=True)
+    [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_a[...]""", unsafe_allow_html=True)
+    st.image("http://static1.squarespace.com/static/658043d6c66e634cdbc7a4cc/t/65b2a24c41f1487f15750d7f/1706205772677/Logo-Lydech-avec-baseline-h240.png?format=1500w")
