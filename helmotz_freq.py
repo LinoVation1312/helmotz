@@ -22,7 +22,10 @@ def calculate_metrics(inputs):
         
         # Unit conversions
         c = 20.05 * math.sqrt(273.15 + inputs['temp'])*1000
-
+        D = inputs['D']
+        t = inputs['t']
+        d = inputs['d']
+        L = inputs['L']
         # Material area calculations
         material_area = math.pi * (D/2)**2
         hole_area = math.pi * (d/2)**2
