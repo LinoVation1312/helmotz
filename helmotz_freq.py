@@ -7,6 +7,15 @@ from io import BytesIO
 
 st.set_page_config(page_title="Helmholtz Resonance Calculator", layout="centered")
 
+
+# Function to save figure to BytesIO
+def save_figure_to_bytes(fig, format='png'):
+    img_bytes = io.BytesIO()
+    fig.savefig(img_bytes, format=format)
+    img_bytes.seek(0)
+    return img_bytes
+
+
 def calculate_holes_from_spacing(D_mm, spacing_mm):
     """Calculate number of holes in square arrangement within a circle"""
     radius = D_mm / 2
@@ -191,6 +200,13 @@ if st.sidebar.button("Calculate"):
                                 facecolor='white', 
                                 alpha=0.8,
                                 edgecolor='lightgray'))
+            
+            # Save the figure to BytesIO in JPEG format
+            jpeg_bytes = save_figure_to_bytes(fig, format='jpeg')
+            
+            # Save the figure to BytesIO in PDF format
+            pdf_bytes = save_figure_to_bytes(fig, format='pdf')
+
 
             st.pyplot(fig)       
             # Export data
@@ -198,6 +214,20 @@ if st.sidebar.button("Calculate"):
             st.download_button("Download CSV Data", csv, 
                              "frequency_data.csv", "text/csv")
 
+            # Add download buttons
+            st.download_button(
+                label="Download as JPEG",
+                data=jpeg_bytes,
+                file_name="plot.jpeg",
+                mime="image/jpeg"
+            )
+            
+            st.download_button(
+                label="Download as PDF",
+                data=pdf_bytes,
+                file_name="plot.pdf",
+                mime="application/pdf"
+            )
 st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
     st.markdown("""
