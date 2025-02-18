@@ -68,7 +68,7 @@ def calculate_metrics(inputs):
 with st.sidebar:
     st.header("Main Parameters")
     inputs = {
-        'temp': st.number_input("Temperature (°C)", -20.0, 100.0, 20.0),
+        'temp': st.number_input("Temperature (°C)", -20.0, 250.0, 20.0),
         'D': st.number_input("Material diameter (mm)",5.0, 1000.0, 100.0),
         't': st.number_input("Material thickness (mm)",0.05, 50.0, 1.0),
         'd': st.number_input("Hole diameter (mm)",0.1, 50.0, 5.0),
