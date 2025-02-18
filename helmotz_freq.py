@@ -196,13 +196,41 @@ if st.sidebar.button("Calculate"):
                                 edgecolor='lightgray'))
             
 
-            st.pyplot(fig)       
-            # Export data
-            csv = df.to_csv(index=False).encode()
-            st.download_button("Download CSV Data", csv, 
-                             "frequency_data.csv", "text/csv")
-
-
+            # Afficher le plot
+            st.pyplot(fig)
+            
+            # Export PNG
+            png_buf = BytesIO()
+            fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
+            
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.download_button(
+                    label="Download PNG",
+                    data=png_buf.getvalue(),
+                    file_name=f"helmholtz_{vary_param}.png",
+                    mime="image/png"
+                )
+            
+            with col2:
+                pdf_buf = BytesIO()
+                fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
+                st.download_button(
+                    label="Download PDF",
+                    data=pdf_buf.getvalue(),
+                    file_name=f"helmholtz_{vary_param}.pdf",
+                    mime="application/pdf"
+                )
+            
+            with col3:
+                csv = df.to_csv(index=False).encode()
+                st.download_button(
+                    "Download CSV",
+                    csv,
+                    f"helmholtz_{vary_param}.csv",
+                    "text/csv"
+                )
 st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
     st.markdown("""
