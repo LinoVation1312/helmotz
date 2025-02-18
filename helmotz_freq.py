@@ -21,12 +21,8 @@ def calculate_metrics(inputs):
         mode = inputs.get('mode', 'Number')
         
         # Unit conversions
-        c = 20.05 * math.sqrt(273.15 + inputs['temp'])
-        D = inputs['D'] / 1000
-        t = inputs['t'] / 1000
-        d = inputs['d'] / 1000
-        L = inputs['L'] / 1000
-        
+        c = 20.05 * math.sqrt(273.15 + inputs['temp'])*1000
+
         # Material area calculations
         material_area = math.pi * (D/2)**2
         hole_area = math.pi * (d/2)**2
@@ -45,7 +41,7 @@ def calculate_metrics(inputs):
         # Final calculations
         A = N * hole_area
         V = material_area * L
-        Leff = t + 2 * 0.85 * (d/2)
+        Leff = t +0.85*d
         
         if A * V * Leff == 0:
             raise ValueError("Invalid parameters combination")
