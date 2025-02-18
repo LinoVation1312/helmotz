@@ -197,7 +197,9 @@ if st.sidebar.button("Calculate"):
             pdf_buf = BytesIO()
             fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
             fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
-            csv = df.to_csv(index=False).encode()
+            st.session_state['csv'] = df.to_csv(index=False).encode()
+            st.session_state['png_buf'] = png_buf
+            st.session_state['pdf_buf'] = pdf_buf
             
             # Afficher le plot
             st.pyplot(fig)
@@ -207,7 +209,7 @@ if st.sidebar.button("Calculate"):
             with col1:
                 st.download_button(
                     label="Download PNG",
-                    data=png_buf.getvalue(),
+                    data=st.session_state['png_buf'].getvalue(),
                     file_name=f"helmholtz_{vary_param}.png",
                     mime="image/png"
                 )
@@ -215,7 +217,7 @@ if st.sidebar.button("Calculate"):
             with col2:
                 st.download_button(
                     label="Download PDF",
-                    data=pdf_buf.getvalue(),
+                    data=st.session_state['pdf_buf'].getvalue(),
                     file_name=f"helmholtz_{vary_param}.pdf",
                     mime="application/pdf"
                 )
@@ -223,7 +225,7 @@ if st.sidebar.button("Calculate"):
             with col3:
                 st.download_button(
                     "Download CSV",
-                    csv,
+                    st.session_state['csv'],
                     f"helmholtz_{vary_param}.csv",
                     "text/csv"
                 )
