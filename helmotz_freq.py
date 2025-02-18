@@ -174,11 +174,12 @@ if st.sidebar.button("Calculate"):
             ax.grid(True, alpha=0.4)
             
             # Légende améliorée
-            text = f"""Final Parameters:
-            - OA%: {df['OA%'].iloc[-1]:.1f}%
-            - Density: {df['density'].iloc[-1]:.1f}/cm²
-            - Spacing: {df['spacing'].iloc[-1]:.1f} mm
-            - Holes: {int(df['N'].iloc[-1])}"""
+              text = f"""Final Parameters:
+              - Density: {density}/cm²
+              - Holes: {int(df['N'].iloc[-1])}
+              - Hole diameter: {inputs['d']} mm
+              - Material thickness: {inputs['t']} mm
+              - Air gap: {inputs['L']} mm"""
             
             ax.annotate(text, 
                         xy=(0.70, 0.75), 
