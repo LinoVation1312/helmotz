@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from io import BytesIO
+import mplcursors
+
 
 st.set_page_config(page_title="Helmholtz Resonance Calculator", page_icon="https://images.squarespace-cdn.com/content/v1/658043d6c66e634cdbc7a4cc/8b08c99b-d2f0-4e8d-acfd-a91b08c6a4ed/Logo-Lydech-avec-baseline-h240.png?format=1500w",layout="centered")
 
@@ -214,21 +216,20 @@ if st.sidebar.button("Calculate"):
 - Air gap: {inputs['L']} mm
 - OA%: {df['OA%'].iloc[-1]:.2f}%"""
             
-            ax.annotate(text, 
-                        xy=(0.60, 0.85), 
-                        xycoords='axes fraction',
-                        ha='left', 
-                        va='top',
-                        fontsize=12,
-                        fontfamily='monospace',
-                        bbox=dict(boxstyle='round', 
-                                facecolor='white', 
-                                alpha=0.8,
-                                edgecolor='lightgray'))
+            annotation = ax.annotate(text, 
+                                    xy=(0.60, 0.85), 
+                                    xycoords='axes fraction',
+                                    ha='left', 
+                                    va='top',
+                                    fontsize=12,
+                                    fontfamily='monospace',
+                                    bbox=dict(boxstyle='round', 
+                                              facecolor='white', 
+                                              alpha=0.8,
+                                              edgecolor='lightgray'))
             
-            # Make legend draggable
-            legend = ax.legend()
-            legend.set_draggable(True)
+            # Make annotation draggable
+            mplcursors.cursor(annotation, draggable=True)
             
             # Préparer les buffers en dehors des boutons
             png_buf = BytesIO()
@@ -241,7 +242,7 @@ if st.sidebar.button("Calculate"):
             
             # Afficher le plot
             st.pyplot(fig)
-            
+                        
             col1, col2, col3 = st.columns(3)
             
             with col1:
