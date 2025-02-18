@@ -192,6 +192,7 @@ if st.sidebar.button("Calculate"):
         if results:
             df = pd.DataFrame(results)
             
+            
             # Create plot
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
@@ -224,6 +225,10 @@ if st.sidebar.button("Calculate"):
                                 facecolor='white', 
                                 alpha=0.8,
                                 edgecolor='lightgray'))
+            
+            # Make legend draggable
+            legend = ax.legend()
+            legend.set_draggable(True)
             
             # Préparer les buffers en dehors des boutons
             png_buf = BytesIO()
