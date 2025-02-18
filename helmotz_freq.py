@@ -44,7 +44,7 @@ def calculate_metrics(inputs):
         # Final calculations
         A = N * hole_area
         V = material_area * L
-        Leff = t +0.85*d
+        Leff = t
         
         if A * V * Leff == 0:
             raise ValueError("Invalid parameters combination")
