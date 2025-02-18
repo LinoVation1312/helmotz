@@ -120,9 +120,9 @@ if st.sidebar.button("Calculate"):
             
             st.markdown("**Secondary Parameters:**")
             cols2 = st.columns(3)
-            cols2[0].metric("Open Area", f"{metrics['OA%']:.1f}%")
-            cols2[1].metric("Hole Density", f"{metrics['density']:.1f}/cm²")
-            cols2[2].metric("Hole Spacing", f"{metrics['spacing']:.1f} mm")
+            cols2[0].metric("Open Area", f"{metrics['OA%']:.2f}%")
+            cols2[1].metric("Hole Density", f"{metrics['density']:.2f}/cm²")
+            cols2[2].metric("Hole Spacing", f"{metrics['spacing']:.2f} mm")
     else:
         progress = st.progress(0)
         for i, val in enumerate(param_range):
@@ -174,7 +174,7 @@ if st.sidebar.button("Calculate"):
             ax.grid(True, alpha=0.4)
             
             # Légende améliorée
-            density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.1f}"
+            density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.2f}"
             text = f"""Final Parameters:
             - Density: {density}/cm²
             - Holes: {int(df['N'].iloc[-1])}
@@ -183,7 +183,7 @@ if st.sidebar.button("Calculate"):
             - Air gap: {inputs['L']} mm"""
             
             ax.annotate(text, 
-                        xy=(0.70, 0.75), 
+                        xy=(0.50, 0.75), 
                         xycoords='axes fraction',
                         ha='left', 
                         va='top',
