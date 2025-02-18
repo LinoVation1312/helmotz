@@ -228,9 +228,13 @@ if st.sidebar.button("Calculate"):
                                               alpha=0.8,
                                               edgecolor='lightgray'))
             
-            # Make annotation draggable
-            mplcursors.cursor(annotation, draggable=True)
+            # Use mplcursors to make the annotation interactive
+            cursor = mplcursors.cursor(hover=True)
             
+            @cursor.connect("add")
+            def on_add(sel):
+                sel.annotation.set_text(text)
+                sel.annotation.draggable(True)
             # Préparer les buffers en dehors des boutons
             png_buf = BytesIO()
             pdf_buf = BytesIO()
