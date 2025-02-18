@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from io import BytesIO
 
-st.set_page_config(page_title="Helmholtz Resonance Calculator", layout="centered")
+st.set_page_config(page_title="Helmholtz Resonance Calculator", page_icon="https://images.squarespace-cdn.com/content/v1/658043d6c66e634cdbc7a4cc/8b08c99b-d2f0-4e8d-acfd-a91b08c6a4ed/Logo-Lydech-avec-baseline-h240.png?format=1500w",layout="centered")
 
 def calculate_holes_from_spacing(D_mm, spacing_mm):
     """Calculate number of holes in square arrangement within a circle"""
