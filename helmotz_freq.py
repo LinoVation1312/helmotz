@@ -106,7 +106,7 @@ with st.sidebar:
         'D': st.number_input("Material diameter (mm)", 5.0, 1000.0, 100.0),
         't': st.number_input("Material thickness (mm)", 0.05, 50.0, 1.0),
         'd': st.number_input("Hole diameter (mm)", 0.1, 50.0, 5.0),
-        'L': st.number_input("Air gap (mm)", 0.01, 100.0, 10.0),
+        'L': st.number_input("Air gap (mm)", 0.01, 200.0, 10.0),
         'k': st.number_input("Correction factor (k)", 0.1, 2.0, 1.0, 0.1)
     }
     
