@@ -29,7 +29,7 @@ def calculate_metrics(inputs):
         L = inputs['L'] / 1000
 
          # Warning for small hole diameters
-        if d <= 0.001:
+        if inputs['d'] <= 1:
             st.warning("Results may differ from reality due to viscothermal effects: Not accounted for in this simplified model (requires corrections for small holes < 1 mm).")
        
         # Material area calculations
