@@ -82,19 +82,6 @@ Lino CONORD
 Email: lino.conord@gmail.com
 
 
-**Formatting Notes:**
-
-- **Code Blocks**: For code blocks, use triple backticks (```) before and after the code. This is the standard way to format code blocks in Markdown. :contentReference[oaicite:0]{index=0}
-- **Inline Code**: For inline code, wrap the code snippet with single backticks. :contentReference[oaicite:1]{index=1}
-- **Lists**: Use hyphens (-) or asterisks (*) for unordered lists, and numbers followed by periods for ordered lists.
-- **Links**: Use the `[text](URL)` syntax to create hyperlinks.
-- **Emphasis**: Use asterisks (*) or underscores (_) for emphasis.
-
-For more detailed information on Markdown formatting, you can refer to GitHub's documentation on [Creating and highlighting code blocks](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks) and [Basic writing and formatting syntax](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-If you have any further questions or need additional assistance, feel free to ask!
-
-
 
 
 
