@@ -16,15 +16,12 @@ This interactive Python application calculates the resonance frequency of a Helm
 
 ## How to Use
 
-1. **Access the App**: Visit the deployed app on [Streamlit Community Cloud](https://your-streamlit-app-link).
-2. **Input Parameters**:
-   - Adjust the sliders and input fields in the sidebar to set the desired parameters.
-   - Choose whether to calculate based on the number of holes or hole density.
-3. **Run Calculations**:
+1. **Access the App**: Visit the deployed app on [Streamlit Community Cloud](helmholtz.streamlit.app).
+2. **Run Calculations**:
    - Click the "Calculate" button to compute the resonance frequency.
    - If a parameter range is selected, a graph will display showing the frequency variation.
-4. **Export Data**:
-   - Use the "Download Data" button to export the results as a CSV file.
+3. **Export Data**:
+   - Use the "Download Data" buttons to export the results as CSV, PDF or JPEG file.
 
 ---
 
@@ -35,8 +32,8 @@ To run this app locally, follow these steps:
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/your-username/helmholtz-resonator-app.git
-   cd helmholtz-resonator-app
+   git clone https://github.com/LinoVation1312/helmotz.git
+   cd helmotz
 Install Dependencies:
 
    ```bash
@@ -44,7 +41,7 @@ pip install -r requirements.txt
 Run the App:
 ```
  ```bash
-streamlit run app.py
+streamlit run helmotz.py
 ```
 Access the App:
 
