@@ -41,7 +41,7 @@ pip install -r requirements.txt
 Run the App:
 ```
  ```bash
-streamlit run helmotz.py
+streamlit run helmotz_freq.py
 ```
 Access the App:
 
