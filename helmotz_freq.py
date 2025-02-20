@@ -271,13 +271,13 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
     # Afficher le plot
     st.pyplot(fig)
      # Gestion des téléchargements
-        png_buf = BytesIO()
-        pdf_buf = BytesIO()
-        fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
-        fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
+    png_buf = BytesIO()
+    pdf_buf = BytesIO()
+    fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
+    fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
         
            
-            col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
             
             with col1:
                 st.download_button(
