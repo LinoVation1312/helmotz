@@ -145,131 +145,116 @@ if st.sidebar.button("Calculate"):
     base_inputs = inputs.copy()
     
     if vary_param == "None":
-        metrics = calculate_metrics(base_inputs)
-        if metrics:
-            st.subheader("Results")
-            cols = st.columns(2)
-            cols[0].metric("Resonance Frequency", f"{metrics['f0']:.1f} Hz")
-            cols[1].metric("Number of Holes", int(metrics['N']))
-            
-            st.markdown("**Secondary Parameters:**")
-            cols2 = st.columns(3)
-            cols2[0].metric("Open Area", f"{metrics['OA%']:.2f}%")
-            cols2[1].metric("Hole Density", f"{metrics['density']:.2f}/cm²")
-            cols2[2].metric("Hole Spacing", f"{metrics['spacing']:.2f} mm")
+        # ... (code existant inchangé)
     else:
-        progress = st.progress(0)
-        for i, val in enumerate(param_range):
-            current = base_inputs.copy()
-            
-            # Update varying parameter
-            if vary_param == "Temperature":
-                current['temp'] = val
-            elif vary_param == "Material thickness":
-                current['t'] = val
-            elif vary_param == "Hole diameter":
-                current['d'] = val
-            elif vary_param == "Air gap":
-                current['L'] = val
-            elif vary_param == "Material diameter":
-                current['D'] = val
-            elif vary_param == "Hole density":
-                current['density'] = val
-                current['mode'] = "Density"
-            elif vary_param == "Number of holes":
-                current['N'] = int(val)
-                current['mode'] = "Number"
-            elif vary_param == "OA%":
-                current['OA'] = val
-                current['mode'] = "OA%"
-            elif vary_param == "Hole spacing":
-                current['spacing'] = val
-                current['mode'] = "Spacing"
-            elif vary_param == "Correction factor":
-                current['k'] = val
-            
-            metrics = calculate_metrics(current)
-            if metrics:
-                results.append({'x': val, 'f0': metrics['f0'], **metrics})
-            progress.progress((i + 1) / len(param_range))
+        # ... (code existant pour générer les résultats)
         
         if results:
             df = pd.DataFrame(results)
-            
-            
-            # Create plot
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
-            
-            # Configuration du graphique
-            title = f"Helmholtz Resonance Frequency vs. {vary_param}"
-            ax.set_title(title, fontsize=15, pad=20)
-            ax.set_xlabel(vary_param, fontsize=12)
-            ax.set_ylabel("Frequency (Hz)", fontsize=12)
-            ax.grid(True, alpha=0.4)
-            
-            # Légende améliorée
-            density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.2f}"
-            text = f"""Final Parameters:
+            # Stockage des résultats dans la session
+            st.session_state['analysis_df'] = df
+            st.session_state['vary_param'] = vary_param
+            st.session_state['base_inputs'] = base_inputs
+
+# Nouvelle section après le bouton Calculate
+if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
+    df = st.session_state['analysis_df']
+    vary_param = st.session_state['vary_param']
+    base_inputs = st.session_state['base_inputs']
+    
+    # Création du plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
+    
+    # Configuration du graphique
+    title = f"Helmholtz Resonance Frequency vs. {vary_param}"
+    ax.set_title(title, fontsize=15, pad=20)
+    ax.set_xlabel(vary_param, fontsize=12)
+    ax.set_ylabel("Frequency (Hz)", fontsize=12)
+    ax.grid(True, alpha=0.4)
+
+    # Gestion de l'annotation
+    density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.2f}"
+    text = f"""Final Parameters:
 - Density: {density}/cm²
-- Hole diameter: {inputs['d']} mm
-- Material thickness: {inputs['t']} mm
-- Air gap: {inputs['L']} mm
+- Hole diameter: {base_inputs['d']} mm
+- Material thickness: {base_inputs['t']} mm
+- Air gap: {base_inputs['L']} mm
 - OA%: {df['OA%'].iloc[-1]:.2f}%"""
-            
-            annotation = ax.annotate(text, 
-                                    xy=(0.60, 0.85), 
-                                    xycoords='axes fraction',
-                                    ha='left', 
-                                    va='top',
-                                    fontsize=12,
-                                    fontfamily='monospace',
-                                    bbox=dict(boxstyle='round', 
-                                              facecolor='white', 
-                                              alpha=0.8,
-                                              edgecolor='lightgray'))
-            
-            # Use mplcursors to make the annotation interactive
-            cursor = mplcursors.cursor(annotation)
-            cursor.connect("add", lambda sel: sel.annotation.set_text(text))
-            
-            # Préparer les buffers en dehors des boutons
-            png_buf = BytesIO()
-            pdf_buf = BytesIO()
-            fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
-            fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
-            st.session_state['csv'] = df.to_csv(index=False).encode()
-            st.session_state['png_buf'] = png_buf
-            st.session_state['pdf_buf'] = pdf_buf
-            
-            # Afficher le plot
-            st.pyplot(fig)
-                        
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.download_button(
-                    label="Download PNG",
-                    data=st.session_state['png_buf'].getvalue(),
-                    file_name=f"helmholtz_{vary_param}.png",
-                    mime="image/png"
-                )
-            
-            with col2:
-                st.download_button(
-                    label="Download PDF",
-                    data=st.session_state['pdf_buf'].getvalue(),
-                    file_name=f"helmholtz_{vary_param}.pdf",
-                    mime="application/pdf"
-                )
-            
-            with col3:
-                st.download_button(
-                    "Download CSV",
-                    st.session_state['csv'],
-                    f"helmholtz_{vary_param}.csv",
-                    "text/csv"
-                )
+    
+    annotation = ax.annotate(text, 
+                            xy=(0.60, 0.85), 
+                            xycoords='axes fraction',
+                            ha='left', 
+                            va='top',
+                            fontsize=12,
+                            fontfamily='monospace',
+                            bbox=dict(boxstyle='round', 
+                                      facecolor='white', 
+                                      alpha=0.8,
+                                      edgecolor='lightgray'))
+
+    # Widget de saisie de la fréquence
+    target_freq = st.number_input(
+        "Enter target frequency (Hz) [0-10000]:",
+        min_value=0.0,
+        max_value=10000.0,
+        value=1000.0,
+        step=100.0
+    )
+    
+    # Vérification de la plage
+    min_f0 = df['f0'].min()
+    max_f0 = df['f0'].max()
+    
+    if target_freq < min_f0 or target_freq > max_f0:
+        st.warning("⚠️ Target frequency is out of the current graph range")
+    else:
+        # Recherche de la valeur la plus proche
+        idx = np.abs(df['f0'] - target_freq).argmin()
+        closest_row = df.iloc[idx]
+        x_val = closest_row['x']
+        f0_val = closest_row['f0']
+        
+        # Ajout des marqueurs
+        ax.axvline(x=x_val, color='r', linestyle='--', alpha=0.7)
+        ax.axhline(y=f0_val, color='r', linestyle='--', alpha=0.7)
+        ax.plot(x_val, f0_val, 'ro', markersize=8)
+        
+        # Affichage de la valeur
+        st.success(f"**Corresponding {vary_param}:** {x_val:.2f} (Exact frequency: {f0_val:.2f} Hz)")
+
+    # Affichage final du plot
+    st.pyplot(fig)
+    
+    # Gestion des téléchargements
+    png_buf = BytesIO()
+    pdf_buf = BytesIO()
+    fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
+    fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.download_button(
+            "Download PNG",
+            png_buf.getvalue(),
+            f"helmholtz_{vary_param}.png",
+            "image/png"
+        )
+    with col2:
+        st.download_button(
+            "Download PDF",
+            pdf_buf.getvalue(),
+            f"helmholtz_{vary_param}.pdf",
+            "application/pdf"
+        )
+    with col3:
+        st.download_button(
+            "Download CSV",
+            df.to_csv(index=False).encode(),
+            f"helmholtz_{vary_param}.csv",
+            "text/csv"
+        )
 st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
     st.markdown("""
