@@ -206,9 +206,9 @@ if st.sidebar.button("Calculate"):
         vary_param = st.session_state['vary_param']
         base_inputs = st.session_state['base_inputs']
 
-            # Create plot
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
+                # Create plot
+                fig, ax = plt.subplots(figsize=(10, 6))
+                ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
             
             # Configuration du graphique
             title = f"Helmholtz Resonance Frequency vs. {vary_param}"
