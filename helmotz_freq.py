@@ -177,11 +177,6 @@ if st.sidebar.button("Calculate"):
             st.session_state['vary_param'] = vary_param
             st.session_state['base_inputs'] = base_inputs
 
-            # Initialize CSV in session state
-            csv_buf = BytesIO()
-            df.to_csv(csv_buf, index=False)
-            st.session_state['csv'] = csv_buf.getvalue()
-
 # Nouvelle section après le bouton Calculate
 if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
     df = st.session_state['analysis_df']
@@ -208,9 +203,14 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
 - Air gap: {inputs['L']} mm
 - OA%: {df['OA%'].iloc[-1]:.2f}%"""
 
+    # Dynamic positioning of the annotation
+    annotation_position = (0.60, 0.85)
+    if any(df['f0'] > df['f0'].iloc[-1] * 1.1):  # Check if annotation overlaps with data
+        annotation_position = (0.60, 0.15)  # Move to bottom right if overlap
+
     annotation = ax.annotate(
         text,
-        xy=(0.60, 0.85),
+        xy=annotation_position,
         xycoords='axes fraction',
         ha='left',
         va='top',
@@ -277,13 +277,15 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
         )
 
     with col3:
-        if 'csv' in st.session_state:
-            st.download_button(
-                "Download CSV",
-                st.session_state['csv'],
-                f"helmholtz_{vary_param}.csv",
-                "text/csv"
-            )
+        # Generate CSV content on the fly
+        csv_buf = BytesIO()
+        df.to_csv(csv_buf, index=False)
+        st.download_button(
+            "Download CSV",
+            csv_buf.getvalue(),
+            f"helmholtz_{vary_param}.csv",
+            "text/csv"
+        )
 
 st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
