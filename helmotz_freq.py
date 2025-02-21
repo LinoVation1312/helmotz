@@ -6,7 +6,6 @@ import pandas as pd
 from io import BytesIO
 import mplcursors
 
-
 st.set_page_config(page_title="Helmholtz Resonance Calculator", page_icon="https://images.squarespace-cdn.com/content/v1/658043d6c66e634cdbc7a4cc/8b08c99b-d2f0-4e8d-acfd-a91b08c6a4ed/Logo-Lydech-avec-baseline-h240.png?format=1500w",layout="centered")
 
 def calculate_holes_from_spacing(D_mm, spacing_mm):
@@ -16,23 +15,23 @@ def calculate_holes_from_spacing(D_mm, spacing_mm):
     start = -((grid_points - 1) * spacing_mm) / 2
     positions = [start + i * spacing_mm for i in range(grid_points)]
     return sum(1 for x in positions for y in positions if math.hypot(x, y) <= radius)
+
 def calculate_metrics(inputs):
     """Calculate all acoustic parameters and frequency"""
     try:
         mode = inputs.get('mode', 'Number')
-        
+
         # Unit conversions
-        c = 20.05 * math.sqrt(273.15 + inputs['temp']) 
+        c = 20.05 * math.sqrt(273.15 + inputs['temp'])
         D = inputs['D'] / 1000
         t = inputs['t'] / 1000
         d = inputs['d'] / 1000
         L = inputs['L'] / 1000
 
- 
         # Material area calculations
         material_area = math.pi * (D / 2) ** 2
         hole_area = math.pi * (d / 2) ** 2
-        
+
         # Calculate number of holes
         if mode == 'Number':
             N = inputs['N']
@@ -50,19 +49,19 @@ def calculate_metrics(inputs):
         # Final calculations
         A = N * hole_area
         V = material_area * L
-        Leff = t+1.7*d/2 #correction
-        
+        Leff = t + 1.7 * d / 2  # correction
+
         if A * V * Leff == 0:
             raise ValueError("Invalid parameters combination")
-            
+
         f0 = inputs['k'] * (c / (2 * math.pi)) * math.sqrt(A / (V * Leff))
-        
+
         # Calculate OA% for Spacing mode
         if mode == 'Spacing':
             OA_percent = ((math.pi * (d * 1000) ** 2) / (4 * (spacing_mm ** 2))) * 100
         else:
             OA_percent = (A / material_area) * 100
-        
+
         return {
             'f0': f0,
             'OA%': OA_percent,
@@ -70,29 +69,7 @@ def calculate_metrics(inputs):
             'spacing': math.sqrt(1 / (N / (material_area * 10000))) * 10 if N else 0,
             'N': N
         }
-        
-    except Exception as e:
-        st.error(f"Calculation error: {str(e)}")
-        return None
-        
-        # Final calculations
-        A = N * hole_area
-        V = material_area * L
-        Leff = t + 1.7 * d/2 #correction
-        
-        if A * V * Leff == 0:
-            raise ValueError("Invalid parameters combination")
-            
-        f0 = inputs['k'] * (c / (2 * math.pi)) * math.sqrt(A / (V * Leff))
-        
-        return {
-            'f0': f0,
-            'OA%': (A / material_area) * 100,
-            'density': N / (material_area * 10000),
-            'spacing': math.sqrt(1 / (N / (material_area * 10000))) * 10 if N else 0,
-            'N': N
-        }
-        
+
     except Exception as e:
         st.error(f"Calculation error: {str(e)}")
         return None
@@ -109,11 +86,11 @@ with st.sidebar:
         'L': st.number_input("Air gap (mm)", 0.01, 200.0, 10.0),
         'k': st.number_input("Correction factor (k)", 0.1, 2.0, 1.0, 0.1)
     }
-    
-    calc_mode = st.radio("Calculation mode:", 
+
+    calc_mode = st.radio("Calculation mode:",
                         ["Number", "Density", "OA%", "Spacing"])
     inputs['mode'] = calc_mode
-    
+
     if calc_mode == "Number":
         inputs['N'] = st.number_input("Number of holes", 1, 10000, 100)
     elif calc_mode == "Density":
@@ -125,13 +102,13 @@ with st.sidebar:
 
     st.header("Parameter Analysis")
     vary_params = [
-        "None", "Temperature", "Material thickness", 
+        "None", "Temperature", "Material thickness",
         "Hole diameter", "Air gap", "Material diameter",
-        "Hole density", "Number of holes", "OA%", 
+        "Hole density", "Number of holes", "OA%",
         "Hole spacing", "Correction factor"
     ]
     vary_param = st.selectbox("Vary parameter:", vary_params)
-    
+
     param_range = None
     if vary_param != "None":
         st.subheader("Variation Range")
@@ -199,6 +176,11 @@ if st.sidebar.button("Calculate"):
             st.session_state['analysis_df'] = df
             st.session_state['vary_param'] = vary_param
             st.session_state['base_inputs'] = base_inputs
+
+            # Initialize CSV in session state
+            csv_buf = BytesIO()
+            df.to_csv(csv_buf, index=False)
+            st.session_state['csv'] = csv_buf.getvalue()
 
 # Nouvelle section après le bouton Calculate
 if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
@@ -295,12 +277,13 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
         )
 
     with col3:
-        st.download_button(
-            "Download CSV",
-            st.session_state['csv'],
-            f"helmholtz_{vary_param}.csv",
-            "text/csv"
-        )
+        if 'csv' in st.session_state:
+            st.download_button(
+                "Download CSV",
+                st.session_state['csv'],
+                f"helmholtz_{vary_param}.csv",
+                "text/csv"
+            )
 
 st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
@@ -332,14 +315,11 @@ with st.expander("Calculation Notes"):
     - Hole shape (round vs. slot vs. hexagonal ...)
     - Internal surface roughness
 
-
-    **Experimental Reference:**  
+    **Experimental Reference:**
     Values derived from
     [*Eﬀective conditions for the reﬂection of an acoustic wave by low-porosity perforated plates* (Ingard, 2014)](https://www.academia.edu/83400811/Effective_conditions_for_the_reflection_of_an_acoustic_wave_by_low-porosity_perforated_plates)
     """, unsafe_allow_html=True)
-    
 
 st.markdown("<br><br><br><br><br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-
 
 st.image("http://static1.squarespace.com/static/658043d6c66e634cdbc7a4cc/t/65b2a24c41f1487f15750d7f/1706205772677/Logo-Lydech-avec-baseline-h240.png?format=1500w")
