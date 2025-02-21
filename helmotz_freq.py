@@ -204,7 +204,7 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
 - OA%: {df['OA%'].iloc[-1]:.2f}%"""
 
     # Dynamic positioning of the annotation
-    annotation_position = (0.60, 0.85)
+    annotation_position = (0.05, 0.95)
     if any(df['f0'] > df['f0'].iloc[-1] * 1.1):  # Check if annotation overlaps with data
         annotation_position = (0.60, 0.15)  # Move to bottom right if overlap
 
