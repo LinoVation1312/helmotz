@@ -220,7 +220,7 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
     # Légende améliorée
     density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.2f}"
     text = f"""Final Parameters:
-- Density: {density}/cm²
+- Hole Density: {density}/cm²
 - Hole diameter: {inputs['d']} mm
 - Material thickness: {inputs['t']} mm
 - Air gap: {inputs['L']} mm
