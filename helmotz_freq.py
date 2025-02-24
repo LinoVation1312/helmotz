@@ -298,7 +298,7 @@ with st.expander("Theory"):
     - $c$ = speed of sound (≈343 m/s at 20°C)
     - $A$ = total hole area
     - $V$ = cavity volume
-    - $L_{eff}$ = effective neck length = thickness + 0.8 $$\\cdot \\phi$$ (in theory, with small thickness,  $L_{eff}$ = thickness is used)
+    - $L_{eff}$ = effective neck length = thickness + 0.8 $$\\cdot \\phi$$
     - $k$ = correction factor (empiric)
     """)
     st.image("https://media.cheggcdn.com/media%2F352%2F352c4c43-1624-4466-b3f7-0854654c3ca1%2FphplUUdj3.png")
