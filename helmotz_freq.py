@@ -28,7 +28,7 @@ def calculate_metrics(inputs):
         d = inputs['d'] / 1000
         L = inputs['L'] / 1000
 
-        # Material area calculations
+
         material_area = math.pi * (D / 2) ** 2
         hole_area = math.pi * (d / 2) ** 2
 
@@ -46,7 +46,7 @@ def calculate_metrics(inputs):
             N = int(density * (material_area * 10000))
             N = max(N, 1)
 
-        # Final calculations
+
         A = N * hole_area
         V = material_area * L
         Leff = t + 1.7 * d / 2  # correction
@@ -172,12 +172,12 @@ if st.sidebar.button("Calculate"):
 
         if results:
             df = pd.DataFrame(results)
-            # Stockage des résultats dans la session
+
             st.session_state['analysis_df'] = df
             st.session_state['vary_param'] = vary_param
             st.session_state['base_inputs'] = base_inputs
 
-# Nouvelle section après le bouton Calculate
+
 if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
     df = st.session_state['analysis_df']
     vary_param = st.session_state['vary_param']
@@ -187,14 +187,13 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(df['x'], df['f0'], 'b-', lw=2, label='Resonance Frequency')
 
-    # Configuration du graphique
     title = f"Helmholtz Resonance Frequency vs. {vary_param}"
     ax.set_title(title, fontsize=15, pad=20)
     ax.set_xlabel(vary_param, fontsize=12)
     ax.set_ylabel("Frequency (Hz)", fontsize=12)
     ax.grid(True, alpha=0.4)
 
-    # Légende améliorée
+    # Légende 
     density = f"{df['density'].iloc[-1]:.2e}" if df['density'].iloc[-1] < 0.05 else f"{df['density'].iloc[-1]:.2f}"
     text = f"""Final Parameters:
 - Hole Density: {density}/cm²
@@ -203,10 +202,10 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
 - Air gap: {inputs['L']} mm
 - OA%: {df['OA%'].iloc[-1]:.2f}%"""
 
-    # Dynamic positioning of the annotation
+
     annotation_position = (0.05, 0.95)
-    if any(df['f0'] > df['f0'].iloc[-1] * 1.1):  # Check if annotation overlaps with data
-        annotation_position = (0.60, 0.15)  # Move to bottom right if overlap
+    if any(df['f0'] > df['f0'].iloc[-1] * 1.1):  
+        annotation_position = (0.60, 0.15)  
 
     annotation = ax.annotate(
         text,
@@ -277,7 +276,6 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
         )
 
     with col3:
-        # Generate CSV content on the fly
         csv_buf = BytesIO()
         df.to_csv(csv_buf, index=False)
         st.download_button(
