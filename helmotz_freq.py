@@ -285,7 +285,7 @@ if 'analysis_df' in st.session_state and 'vary_param' in st.session_state:
             "text/csv"
         )
 
-st.title("Helmholtz Resonance Calculator")
+#st.title("Helmholtz Resonance Calculator")
 with st.expander("Theory"):
     st.markdown("""
     **Resonance frequency formula:**
