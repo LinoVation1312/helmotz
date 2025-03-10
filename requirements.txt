@@ -1,5 +1,5 @@
 streamlit
 numpy
 matplotlib
-pandas
+
 mplcursors
