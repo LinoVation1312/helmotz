@@ -224,8 +224,8 @@ with mode_panel:
                 st.session_state['vary_param_panel'] = vary_param_panel
                 st.session_state['base_inputs_panel'] = base_inputs
 
-    # Display area for results and analysis with internal tabs
-    tab_calc_p, tab_analysis_p = st.tabs(["Calculator", "Analysis"])
+    # Display area for results and analysis with internal tabs (Analysis first to avoid tab jump)
+    tab_analysis_p, tab_calc_p = st.tabs(["Analysis", "Calculator"])
 
     with tab_calc_p:
         metrics = st.session_state.get('panel_last_metrics')
@@ -249,13 +249,31 @@ with mode_panel:
             st.subheader(f"Resonance Frequency vs {vary_param}")
             st.line_chart(pd.DataFrame({'x': df['x'].values, 'f0': df['f0'].values}).set_index('x'))
 
+            # Target selector before figure so we can overlay lines
+            target_freq = st.number_input("Target frequency (Hz)", min_value=0.0, max_value=20000.0, value=1000.0, step=50.0, key="target_panel")
+            min_f0 = df['f0'].min(); max_f0 = df['f0'].max()
+            have_match = min_f0 <= target_freq <= max_f0
+            x_val = None; f0_val = None
+            if have_match:
+                idx = np.abs(df['f0'] - target_freq).argmin()
+                closest_row = df.iloc[idx]
+                x_val = float(closest_row['x']); f0_val = float(closest_row['f0'])
+
+            # Matplotlib plot with dashed crosshair lines
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df['x'], df['f0'], 'b-', lw=2)
             ax.set_xlabel(vary_param)
             ax.set_ylabel('Frequency (Hz)')
             ax.grid(True, alpha=0.4)
+            # Horizontal dashed line at target frequency
+            ax.axhline(y=target_freq, color='r', linestyle='--', alpha=0.6, label='Target f')
+            # Vertical dashed line at matching parameter (if in range)
+            if have_match and x_val is not None:
+                ax.axvline(x=x_val, color='r', linestyle='--', alpha=0.6)
+                ax.plot([x_val], [f0_val], 'ro', alpha=0.7)
             st.pyplot(fig)
 
+            # Downloads of the figure and data
             png_buf = BytesIO(); pdf_buf = BytesIO()
             fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
             fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
@@ -268,14 +286,11 @@ with mode_panel:
                 csv_buf = BytesIO(); df.to_csv(csv_buf, index=False)
                 st.download_button("Download CSV", csv_buf.getvalue(), f"helmholtz_panel_{vary_param}.csv", "text/csv")
 
-            target_freq = st.number_input("Target frequency (Hz)", min_value=0.0, max_value=20000.0, value=1000.0, step=50.0, key="target_panel")
-            min_f0 = df['f0'].min(); max_f0 = df['f0'].max()
-            if target_freq < min_f0 or target_freq > max_f0:
+            # Text feedback
+            if not have_match:
                 st.warning("Target frequency is outside the plotted range.")
             else:
-                idx = np.abs(df['f0'] - target_freq).argmin()
-                closest_row = df.iloc[idx]
-                st.success(f"Closest {vary_param}: {closest_row['x']:.3f} (f0 = {closest_row['f0']:.2f} Hz)")
+                st.success(f"Closest {vary_param}: {x_val:.3f} (f0 = {f0_val:.2f} Hz)")
         else:
             st.info("Run a parameter sweep from the form to see analysis.")
 
@@ -359,7 +374,7 @@ with mode_neck:
                 st.session_state['vary_param_neck'] = vary_param_neck
                 st.session_state['base_inputs_neck'] = inputs_neck
 
-    tab_calc_n, tab_analysis_n = st.tabs(["Calculator", "Analysis"])
+    tab_analysis_n, tab_calc_n = st.tabs(["Analysis", "Calculator"])
 
     with tab_calc_n:
         metrics = st.session_state.get('neck_last_metrics')
@@ -378,13 +393,31 @@ with mode_neck:
             st.subheader(f"Resonance Frequency vs {vary_param}")
             st.line_chart(pd.DataFrame({'x': df['x'].values, 'f0': df['f0'].values}).set_index('x'))
 
+            # Target selector before figure so we can overlay lines
+            target_freq = st.number_input("Target frequency (Hz)", min_value=0.0, max_value=20000.0, value=1000.0, step=50.0, key="target_neck")
+            min_f0 = df['f0'].min(); max_f0 = df['f0'].max()
+            have_match = min_f0 <= target_freq <= max_f0
+            x_val = None; f0_val = None
+            if have_match:
+                idx = np.abs(df['f0'] - target_freq).argmin()
+                closest_row = df.iloc[idx]
+                x_val = float(closest_row['x']); f0_val = float(closest_row['f0'])
+
+            # Matplotlib plot with dashed crosshair lines
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df['x'], df['f0'], 'b-', lw=2)
             ax.set_xlabel(vary_param)
             ax.set_ylabel('Frequency (Hz)')
             ax.grid(True, alpha=0.4)
+            # Horizontal dashed line at target frequency
+            ax.axhline(y=target_freq, color='r', linestyle='--', alpha=0.6, label='Target f')
+            # Vertical dashed line at matching parameter (if in range)
+            if have_match and x_val is not None:
+                ax.axvline(x=x_val, color='r', linestyle='--', alpha=0.6)
+                ax.plot([x_val], [f0_val], 'ro', alpha=0.7)
             st.pyplot(fig)
 
+            # Downloads of the figure and data
             png_buf = BytesIO(); pdf_buf = BytesIO()
             fig.savefig(png_buf, format='png', bbox_inches='tight', dpi=300)
             fig.savefig(pdf_buf, format='pdf', bbox_inches='tight')
@@ -397,14 +430,11 @@ with mode_neck:
                 csv_buf = BytesIO(); df.to_csv(csv_buf, index=False)
                 st.download_button("Download CSV", csv_buf.getvalue(), f"helmholtz_neck_{vary_param}.csv", "text/csv")
 
-            target_freq = st.number_input("Target frequency (Hz)", min_value=0.0, max_value=20000.0, value=1000.0, step=50.0, key="target_neck")
-            min_f0 = df['f0'].min(); max_f0 = df['f0'].max()
-            if target_freq < min_f0 or target_freq > max_f0:
+            # Text feedback
+            if not have_match:
                 st.warning("Target frequency is outside the plotted range.")
             else:
-                idx = np.abs(df['f0'] - target_freq).argmin()
-                closest_row = df.iloc[idx]
-                st.success(f"Closest {vary_param}: {closest_row['x']:.3f} (f0 = {closest_row['f0']:.2f} Hz)")
+                st.success(f"Closest {vary_param}: {x_val:.3f} (f0 = {f0_val:.2f} Hz)")
         else:
             st.info("Run a parameter sweep from the form to see analysis.")
 
